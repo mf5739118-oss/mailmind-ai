@@ -1,0 +1,2634 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MailMind AI - Intelligent Email Assistant</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#070b16;
+    --sidebar:#0c1222;
+    --card:#111a2d;
+    --card2:#16213a;
+    --border:rgba(255,255,255,.08);
+    --text:#f5f7ff;
+    --muted:#8e9ab5;
+    --blue:#5b8cff;
+    --purple:#8b5cf6;
+    --green:#35d399;
+    --red:#ff5570;
+    --yellow:#ffc857;
+    --cyan:#38bdf8;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 80% 10%,rgba(91,140,255,.13),transparent 25%),
+        radial-gradient(circle at 20% 90%,rgba(139,92,246,.10),transparent 25%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+button,
+input,
+textarea,
+select{
+    font-family:inherit;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    width:250px;
+    background:rgba(12,18,34,.92);
+    border-right:1px solid var(--border);
+    padding:22px 15px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:20;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:5px 12px 30px;
+}
+
+.logo-icon{
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    font-size:21px;
+    box-shadow:0 10px 30px rgba(91,140,255,.3);
+}
+
+.logo h2{
+    font-size:18px;
+}
+
+.logo span{
+    color:var(--blue);
+}
+
+.nav-title{
+    color:#53617c;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    padding:12px;
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 13px;
+    border-radius:11px;
+    margin:4px 0;
+    color:var(--muted);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.nav-item:hover,
+.nav-item.active{
+    color:white;
+    background:linear-gradient(
+        90deg,
+        rgba(91,140,255,.18),
+        rgba(91,140,255,.04)
+    );
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.nav-icon{
+    font-size:17px;
+}
+
+.badge{
+    background:var(--blue);
+    color:white;
+    min-width:23px;
+    height:21px;
+    padding:0 6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    font-size:10px;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:20px;
+}
+
+.ai-status{
+    padding:14px;
+    border:1px solid rgba(53,211,153,.18);
+    background:rgba(53,211,153,.05);
+    border-radius:13px;
+}
+
+.ai-status-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 12px var(--green);
+}
+
+.ai-status p{
+    margin-top:7px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    height:75px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    border-bottom:1px solid var(--border);
+    background:rgba(7,11,22,.7);
+    backdrop-filter:blur(20px);
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.search{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0 14px;
+    width:350px;
+}
+
+.search input{
+    background:none;
+    border:0;
+    outline:0;
+    color:white;
+    width:100%;
+    padding:11px 0;
+}
+
+.search input::placeholder{
+    color:#5d6980;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:white;
+    border-radius:11px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.icon-btn:hover{
+    background:var(--card2);
+    transform:translateY(-1px);
+}
+
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#f59e0b,#ef4444);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+    padding:30px;
+}
+
+.welcome{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+.welcome h1{
+    font-size:28px;
+    margin-bottom:7px;
+}
+
+.welcome p{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.date{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:linear-gradient(
+        145deg,
+        rgba(17,26,45,.95),
+        rgba(17,26,45,.6)
+    );
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+}
+
+.stat::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    right:-30px;
+    top:-30px;
+    background:var(--color);
+    opacity:.08;
+}
+
+.stat-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.stat-icon{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(91,140,255,.12);
+}
+
+.stat-number{
+    font-size:25px;
+    font-weight:bold;
+    margin-top:14px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:5px;
+}
+
+.stat-change{
+    color:var(--green);
+    font-size:10px;
+}
+
+/* =========================
+   WORKSPACE
+========================= */
+
+.workspace{
+    display:grid;
+    grid-template-columns:1fr 1.05fr;
+    gap:18px;
+}
+
+/* =========================
+   PANEL
+========================= */
+
+.panel{
+    background:rgba(17,26,45,.85);
+    border:1px solid var(--border);
+    border-radius:17px;
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:17px 18px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.panel-header h3{
+    font-size:14px;
+}
+
+.panel-header span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* =========================
+   EMAIL LIST
+========================= */
+
+.filters{
+    display:flex;
+    gap:7px;
+    padding:12px 15px;
+    border-bottom:1px solid var(--border);
+}
+
+.filter{
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--muted);
+    padding:7px 11px;
+    border-radius:8px;
+    font-size:10px;
+    cursor:pointer;
+}
+
+.filter.active,
+.filter:hover{
+    background:rgba(91,140,255,.14);
+    color:white;
+    border-color:rgba(91,140,255,.3);
+}
+
+.email-list{
+    max-height:650px;
+    overflow:auto;
+}
+
+.email{
+    padding:15px;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;
+    transition:.2s;
+}
+
+.email:hover,
+.email.selected{
+    background:rgba(91,140,255,.06);
+}
+
+.email-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.email-avatar{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#334155,#1e293b);
+    font-size:13px;
+    font-weight:bold;
+    flex-shrink:0;
+}
+
+.email-info{
+    flex:1;
+    min-width:0;
+}
+
+.sender{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.time{
+    color:#63718d;
+    font-size:9px;
+}
+
+.subject{
+    font-size:12px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.preview{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.priority{
+    font-size:8px;
+    font-weight:bold;
+    padding:4px 7px;
+    border-radius:20px;
+}
+
+.priority.high{
+    color:#ff7384;
+    background:rgba(255,82,104,.1);
+}
+
+.priority.medium{
+    color:#ffd166;
+    background:rgba(255,209,102,.1);
+}
+
+.priority.low{
+    color:#35d399;
+    background:rgba(53,211,153,.1);
+}
+
+/* =========================
+   AI PANEL
+========================= */
+
+.ai-panel{
+    min-height:650px;
+}
+
+.ai-header{
+    background:
+        linear-gradient(
+            90deg,
+            rgba(91,140,255,.08),
+            rgba(139,92,246,.08)
+        );
+}
+
+.ai-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.ai-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+}
+
+.analysis{
+    padding:18px;
+    max-height:650px;
+    overflow:auto;
+}
+
+.selected-email{
+    padding:14px;
+    background:var(--card2);
+    border-radius:12px;
+    border:1px solid var(--border);
+    margin-bottom:15px;
+}
+
+.selected-email h4{
+    font-size:13px;
+}
+
+.selected-email p{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:6px;
+}
+
+/* =========================
+   AI CARDS
+========================= */
+
+.analysis-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.analysis-card{
+    background:rgba(22,33,58,.65);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:13px;
+}
+
+.analysis-card.full{
+    grid-column:1/-1;
+}
+
+.analysis-label{
+    color:#71809c;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+.analysis-value{
+    font-size:12px;
+    line-height:1.5;
+}
+
+.summary{
+    color:#d6dbea;
+    font-size:11px;
+    line-height:1.7;
+}
+
+.high-text{
+    color:var(--red);
+    font-weight:bold;
+}
+
+.medium-text{
+    color:var(--yellow);
+    font-weight:bold;
+}
+
+.low-text{
+    color:var(--green);
+    font-weight:bold;
+}
+
+/* =========================
+   TASKS
+========================= */
+
+.task{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:7px 0;
+    color:#cbd5e1;
+    font-size:10px;
+}
+
+.task-check{
+    width:17px;
+    height:17px;
+    border-radius:5px;
+    border:1px solid #33415f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--green);
+}
+
+.deadline{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:8px;
+    border-radius:8px;
+    background:rgba(255,82,104,.06);
+    color:#e4e8f2;
+    font-size:10px;
+    margin-top:7px;
+}
+
+/* =========================
+   SECURITY
+========================= */
+
+.security{
+    display:flex;
+    gap:8px;
+}
+
+.security-box{
+    flex:1;
+    padding:9px;
+    border-radius:8px;
+    background:rgba(53,211,153,.06);
+}
+
+.security-box.warning{
+    background:rgba(255,82,104,.07);
+}
+
+.security-title{
+    font-size:9px;
+    color:var(--muted);
+}
+
+.security-result{
+    font-size:10px;
+    margin-top:5px;
+    color:var(--green);
+    font-weight:bold;
+}
+
+.warning .security-result{
+    color:var(--red);
+}
+
+/* =========================
+   REPLY
+========================= */
+
+.reply-box{
+    background:#0b1221;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:11px;
+    font-size:10px;
+    color:#d6dbea;
+    line-height:1.6;
+    white-space:pre-line;
+}
+
+.reply-buttons{
+    display:flex;
+    gap:7px;
+    margin-top:8px;
+}
+
+.reply-btn{
+    border:1px solid var(--border);
+    background:var(--card2);
+    color:white;
+    border-radius:7px;
+    padding:7px 10px;
+    font-size:9px;
+    cursor:pointer;
+}
+
+.reply-btn.primary{
+    background:var(--blue);
+    border-color:var(--blue);
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:450px;
+    color:var(--muted);
+    text-align:center;
+}
+
+.empty-icon{
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+.empty p{
+    font-size:11px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(7px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(650px,90%);
+    background:#111a2d;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:25px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.close{
+    background:none;
+    border:0;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+}
+
+textarea{
+    width:100%;
+    min-height:180px;
+    resize:vertical;
+    background:#0b1221;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    color:white;
+    outline:none;
+}
+
+.form-input{
+    width:100%;
+    background:#0b1221;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    color:white;
+    outline:none;
+    margin-bottom:10px;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:15px;
+}
+
+.btn{
+    padding:10px 16px;
+    border-radius:9px;
+    border:1px solid var(--border);
+    background:var(--card2);
+    color:white;
+    cursor:pointer;
+}
+
+.btn.primary{
+    background:var(--blue);
+    border-color:var(--blue);
+}
+
+/* =========================
+   NOTIFICATION
+========================= */
+
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    background:#17233b;
+    border:1px solid var(--border);
+    padding:13px 17px;
+    border-radius:11px;
+    display:none;
+    z-index:200;
+    font-size:11px;
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+.toast.show{
+    display:block;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .workspace{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:70px;
+        padding:15px 8px;
+    }
+
+    .logo h2,
+    .nav-title,
+    .nav-item span:not(.nav-icon),
+    .ai-status{
+        display:none;
+    }
+
+    .nav-item{
+        justify-content:center;
+    }
+
+    .main{
+        margin-left:70px;
+        width:calc(100% - 70px);
+    }
+
+    .search{
+        width:220px;
+    }
+}
+
+@media(max-width:600px){
+
+    .content{
+        padding:15px;
+    }
+
+    .header{
+        padding:0 15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .search{
+        width:150px;
+    }
+
+    .analysis-grid{
+        grid-template-columns:1fr;
+    }
+
+    .analysis-card.full{
+        grid-column:auto;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ✉
+        </div>
+
+        <h2>
+            Mail<span>Mind</span>
+        </h2>
+
+    </div>
+
+
+    <div class="nav-title">
+        WORKSPACE
+    </div>
+
+
+    <div class="nav-item active"
+         onclick="changeSection(this,'inbox')">
+
+        <div class="nav-left">
+            <span class="nav-icon">📥</span>
+            <span>Inbox</span>
+        </div>
+
+        <span class="badge">12</span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="changeSection(this,'important')">
+
+        <div class="nav-left">
+            <span class="nav-icon">⭐</span>
+            <span>Important</span>
+        </div>
+
+        <span class="badge">4</span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="changeSection(this,'tasks')">
+
+        <div class="nav-left">
+            <span class="nav-icon">✅</span>
+            <span>Tasks</span>
+        </div>
+
+        <span class="badge">5</span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="changeSection(this,'calendar')">
+
+        <div class="nav-left">
+            <span class="nav-icon">📅</span>
+            <span>Calendar</span>
+        </div>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="changeSection(this,'spam')">
+
+        <div class="nav-left">
+            <span class="nav-icon">🛡️</span>
+            <span>Spam & Security</span>
+        </div>
+
+        <span class="badge">2</span>
+
+    </div>
+
+
+    <div class="nav-title">
+        SYSTEM
+    </div>
+
+
+    <div class="nav-item"
+         onclick="openSettings()">
+
+        <div class="nav-left">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </div>
+
+    </div>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="ai-status">
+
+            <div class="ai-status-top">
+
+                <span class="status-dot"></span>
+
+                AI ENGINE ONLINE
+
+            </div>
+
+            <p>
+                Your intelligent inbox assistant
+                is ready.
+            </p>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="search">
+
+        🔍
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search emails..."
+            oninput="searchEmails()"
+        >
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <button
+            class="icon-btn"
+            onclick="toggleDark()"
+            title="Theme">
+            🌙
+        </button>
+
+        <button
+            class="icon-btn"
+            onclick="showToast('You have 3 new notifications')">
+            🔔
+        </button>
+
+        <div class="avatar">
+            F
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- CONTENT -->
+
+<section class="content">
+
+
+    <div class="welcome">
+
+        <div>
+
+            <h1>
+                Good morning, Fahad 👋
+            </h1>
+
+            <p>
+                Here's what needs your attention today.
+            </p>
+
+        </div>
+
+        <div class="date">
+            Saturday, August 8, 2026
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STATS
+    ================================================== -->
+
+    <div class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    📧
+                </div>
+
+                <span class="stat-change">
+                    +8.2%
+                </span>
+
+            </div>
+
+            <div class="stat-number">
+                128
+            </div>
+
+            <div class="stat-label">
+                Total Emails
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    🚨
+                </div>
+
+                <span class="stat-change">
+                    Attention
+                </span>
+
+            </div>
+
+            <div class="stat-number">
+                7
+            </div>
+
+            <div class="stat-label">
+                High Priority
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
+                <span class="stat-change">
+                    3 today
+                </span>
+
+            </div>
+
+            <div class="stat-number">
+                12
+            </div>
+
+            <div class="stat-label">
+                Pending Tasks
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ⏰
+                </div>
+
+                <span class="stat-change">
+                    2 soon
+                </span>
+
+            </div>
+
+            <div class="stat-number">
+                5
+            </div>
+
+            <div class="stat-label">
+                Upcoming Deadlines
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         WORKSPACE
+    ================================================== -->
+
+    <div class="workspace">
+
+
+        <!-- EMAIL LIST -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h3>
+                    📥 Inbox
+                </h3>
+
+                <span>
+                    12 unread
+                </span>
+
+            </div>
+
+
+            <div class="filters">
+
+                <button
+                    class="filter active"
+                    onclick="filterEmails('all',this)">
+                    All
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterEmails('high',this)">
+                    High
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterEmails('medium',this)">
+                    Medium
+                </button>
+
+                <button
+                    class="filter"
+                    onclick="filterEmails('low',this)">
+                    Low
+                </button>
+
+            </div>
+
+
+            <div
+                class="email-list"
+                id="emailList">
+
+
+                <!-- EMAIL 1 -->
+
+                <div
+                    class="email selected"
+                    data-priority="high"
+                    onclick="selectEmail(0,this)"
+                >
+
+                    <div class="email-top">
+
+                        <div class="email-avatar">
+                            P
+                        </div>
+
+                        <div class="email-info">
+
+                            <div class="sender">
+                                Professor Smith
+                            </div>
+
+                            <div class="time">
+                                10:32 AM
+                            </div>
+
+                        </div>
+
+                        <span class="priority high">
+                            HIGH
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject">
+                        Final Project Submission
+                    </div>
+
+                    <div class="preview">
+                        Please submit your final project report
+                        by Friday at 5 PM...
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL 2 -->
+
+                <div
+                    class="email"
+                    data-priority="medium"
+                    onclick="selectEmail(1,this)"
+                >
+
+                    <div class="email-top">
+
+                        <div class="email-avatar">
+                            G
+                        </div>
+
+                        <div class="email-info">
+
+                            <div class="sender">
+                                Google Calendar
+                            </div>
+
+                            <div class="time">
+                                9:15 AM
+                            </div>
+
+                        </div>
+
+                        <span class="priority medium">
+                            MEDIUM
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject">
+                        Team Meeting - Monday
+                    </div>
+
+                    <div class="preview">
+                        You have been invited to a team meeting
+                        on Monday at 10 AM...
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL 3 -->
+
+                <div
+                    class="email"
+                    data-priority="high"
+                    onclick="selectEmail(2,this)"
+                >
+
+                    <div class="email-top">
+
+                        <div class="email-avatar">
+                            A
+                        </div>
+
+                        <div class="email-info">
+
+                            <div class="sender">
+                                Alex Johnson
+                            </div>
+
+                            <div class="time">
+                                Yesterday
+                            </div>
+
+                        </div>
+
+                        <span class="priority high">
+                            HIGH
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject">
+                        Client Presentation
+                    </div>
+
+                    <div class="preview">
+                        We need the presentation slides ready
+                        before tomorrow morning...
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL 4 -->
+
+                <div
+                    class="email"
+                    data-priority="low"
+                    onclick="selectEmail(3,this)"
+                >
+
+                    <div class="email-top">
+
+                        <div class="email-avatar">
+                            N
+                        </div>
+
+                        <div class="email-info">
+
+                            <div class="sender">
+                                Tech Newsletter
+                            </div>
+
+                            <div class="time">
+                                Yesterday
+                            </div>
+
+                        </div>
+
+                        <span class="priority low">
+                            LOW
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject">
+                        Weekly Technology News
+                    </div>
+
+                    <div class="preview">
+                        Here are this week's biggest technology
+                        stories and updates...
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL 5 -->
+
+                <div
+                    class="email"
+                    data-priority="medium"
+                    onclick="selectEmail(4,this)"
+                >
+
+                    <div class="email-top">
+
+                        <div class="email-avatar">
+                            HR
+                        </div>
+
+                        <div class="email-info">
+
+                            <div class="sender">
+                                HR Department
+                            </div>
+
+                            <div class="time">
+                                Monday
+                            </div>
+
+                        </div>
+
+                        <span class="priority medium">
+                            MEDIUM
+                        </span>
+
+                    </div>
+
+
+                    <div class="subject">
+                        Employee Feedback Survey
+                    </div>
+
+                    <div class="preview">
+                        Please complete the employee survey
+                        before the end of this week...
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- AI ANALYSIS -->
+
+        <div class="panel ai-panel">
+
+
+            <div class="panel-header ai-header">
+
+                <div class="ai-title">
+
+                    <div class="ai-icon">
+                        🤖
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            AI Analysis
+                        </h3>
+
+                        <span>
+                            Powered by intelligent reasoning
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <span>
+                    ● LIVE
+                </span>
+
+            </div>
+
+
+            <div
+                class="analysis"
+                id="analysis">
+
+
+                <!-- SELECTED EMAIL -->
+
+                <div class="selected-email">
+
+                    <h4 id="analysisSubject">
+                        Final Project Submission
+                    </h4>
+
+                    <p id="analysisSender">
+                        From: Professor Smith
+                    </p>
+
+                </div>
+
+
+                <div class="analysis-grid">
+
+
+                    <!-- SUMMARY -->
+
+                    <div class="analysis-card full">
+
+                        <div class="analysis-label">
+                            AI Summary
+                        </div>
+
+                        <div
+                            class="summary"
+                            id="summary"
+                        >
+                            Your final project report must be
+                            submitted by Friday, August 14 at
+                            5:00 PM. The submission must include
+                            both the documentation and presentation.
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRIORITY -->
+
+                    <div class="analysis-card">
+
+                        <div class="analysis-label">
+                            Priority
+                        </div>
+
+                        <div
+                            class="analysis-value high-text"
+                            id="priorityValue"
+                        >
+                            🔴 HIGH
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="analysis-card">
+
+                        <div class="analysis-label">
+                            Category
+                        </div>
+
+                        <div
+                            class="analysis-value"
+                            id="categoryValue"
+                        >
+                            🎓 Academic
+                        </div>
+
+                    </div>
+
+
+                    <!-- TASKS -->
+
+                    <div class="analysis-card">
+
+                        <div class="analysis-label">
+                            Action Items
+                        </div>
+
+                        <div id="tasks">
+
+                            <div class="task">
+                                <span class="task-check">✓</span>
+                                Complete project report
+                            </div>
+
+                            <div class="task">
+                                <span class="task-check">✓</span>
+                                Prepare documentation
+                            </div>
+
+                            <div class="task">
+                                <span class="task-check">✓</span>
+                                Prepare presentation
+                            </div>
+
+                            <div class="task">
+                                <span class="task-check">✓</span>
+                                Submit project
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DEADLINES -->
+
+                    <div class="analysis-card">
+
+                        <div class="analysis-label">
+                            Deadline
+                        </div>
+
+                        <div class="deadline">
+
+                            📅
+
+                            <span>
+                                Friday, Aug 14
+                                <br>
+                                <small>
+                                    5:00 PM
+                                </small>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SECURITY -->
+
+                    <div class="analysis-card full">
+
+                        <div class="analysis-label">
+                            Security Analysis
+                        </div>
+
+
+                        <div class="security">
+
+
+                            <div class="security-box">
+
+                                <div class="security-title">
+                                    SPAM
+                                </div>
+
+                                <div class="security-result">
+                                    ✓ SAFE — 2%
+                                </div>
+
+                            </div>
+
+
+                            <div class="security-box">
+
+                                <div class="security-title">
+                                    PHISHING
+                                </div>
+
+                                <div class="security-result">
+                                    ✓ SAFE — 1%
+                                </div>
+
+                            </div>
+
+
+                            <div class="security-box">
+
+                                <div class="security-title">
+                                    SENTIMENT
+                                </div>
+
+                                <div class="security-result">
+                                    😐 NEUTRAL
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REPLY -->
+
+                    <div class="analysis-card full">
+
+                        <div class="analysis-label">
+                            Smart Reply
+                        </div>
+
+
+                        <div
+                            class="reply-box"
+                            id="reply"
+                        >
+Dear Professor,
+
+Thank you for the reminder. I will make sure
+to complete the project report, documentation,
+and presentation and submit everything before
+the deadline.
+
+Best regards,
+Fahad
+                        </div>
+
+
+                        <div class="reply-buttons">
+
+                            <button
+                                class="reply-btn primary"
+                                onclick="copyReply()"
+                            >
+                                📋 Copy
+                            </button>
+
+                            <button
+                                class="reply-btn"
+                                onclick="makeShort()"
+                            >
+                                ⚡ Shorter
+                            </button>
+
+                            <button
+                                class="reply-btn"
+                                onclick="makeFormal()"
+                            >
+                                🎩 Formal
+                            </button>
+
+                            <button
+                                class="reply-btn"
+                                onclick="openReply()"
+                            >
+                                ✏ Edit
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<!-- =====================================================
+     REPLY MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="replyModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h3>
+                ✏ Edit Reply
+            </h3>
+
+            <button
+                class="close"
+                onclick="closeModal('replyModal')"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <textarea id="replyEditor"></textarea>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn"
+                onclick="closeModal('replyModal')"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn primary"
+                onclick="saveReply()"
+            >
+                Save Reply
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     COMPOSE MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="composeModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h3>
+                ✉ Compose Email
+            </h3>
+
+            <button
+                class="close"
+                onclick="closeModal('composeModal')"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <input
+            class="form-input"
+            placeholder="Recipient"
+        >
+
+        <input
+            class="form-input"
+            placeholder="Subject"
+        >
+
+        <textarea
+            placeholder="Write your email..."
+        ></textarea>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn"
+                onclick="closeModal('composeModal')"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="btn primary"
+                onclick="sendEmail()"
+            >
+                Send Email
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast"
+>
+    Action completed
+</div>
+
+
+<script>
+
+/* =========================================================
+   EMAIL DATA
+========================================================= */
+
+const emails = [
+
+    {
+        sender:"Professor Smith",
+        subject:"Final Project Submission",
+        category:"🎓 Academic",
+        priority:"HIGH",
+
+        summary:
+        "Your final project report must be submitted by Friday, August 14 at 5:00 PM. The submission must include both the documentation and presentation.",
+
+        tasks:[
+            "Complete project report",
+            "Prepare documentation",
+            "Prepare presentation",
+            "Submit project"
+        ],
+
+        deadline:"Friday, August 14 • 5:00 PM",
+
+        spam:false,
+        spamProbability:2,
+
+        phishing:false,
+        phishingProbability:1,
+
+        sentiment:"😐 Neutral",
+
+        reply:
+`Dear Professor,
+
+Thank you for the reminder. I will make sure to complete the project report, documentation, and presentation and submit everything before the deadline.
+
+Best regards,
+Fahad`
+
+    },
+
+
+    {
+        sender:"Google Calendar",
+        subject:"Team Meeting - Monday",
+        category:"💼 Work",
+        priority:"MEDIUM",
+
+        summary:
+        "You have been invited to a team meeting scheduled for Monday at 10:00 AM. The meeting will discuss the current project progress.",
+
+        tasks:[
+            "Attend team meeting",
+            "Review project progress"
+        ],
+
+        deadline:"Monday • 10:00 AM",
+
+        spam:false,
+        spamProbability:1,
+
+        phishing:false,
+        phishingProbability:1,
+
+        sentiment:"😊 Positive",
+
+        reply:
+`Hello,
+
+Thank you for the invitation. I confirm that I will attend the team meeting on Monday at 10:00 AM.
+
+Best regards,
+Fahad`
+
+    },
+
+
+    {
+        sender:"Alex Johnson",
+        subject:"Client Presentation",
+        category:"💼 Work",
+        priority:"HIGH",
+
+        summary:
+        "The client presentation slides need to be completed before tomorrow morning. The presentation should include the latest project progress and results.",
+
+        tasks:[
+            "Complete presentation slides",
+            "Add latest project results",
+            "Review presentation"
+        ],
+
+        deadline:"Tomorrow morning",
+
+        spam:false,
+        spamProbability:1,
+
+        phishing:false,
+        phishingProbability:2,
+
+        sentiment:"😐 Neutral",
+
+        reply:
+`Hi Alex,
+
+Understood. I will complete and review the presentation slides and make sure the latest project results are included before tomorrow morning.
+
+Best,
+Fahad`
+
+    },
+
+
+    {
+        sender:"Tech Newsletter",
+        subject:"Weekly Technology News",
+        category:"📰 Newsletter",
+        priority:"LOW",
+
+        summary:
+        "This newsletter contains general technology news, product announcements, and industry updates. No immediate action is required.",
+
+        tasks:[],
+
+        deadline:"None",
+
+        spam:false,
+        spamProbability:5,
+
+        phishing:false,
+        phishingProbability:1,
+
+        sentiment:"😊 Positive",
+
+        reply:
+`No reply is necessary for this email.`
+
+    },
+
+
+    {
+        sender:"HR Department",
+        subject:"Employee Feedback Survey",
+        category:"👥 HR",
+        priority:"MEDIUM",
+
+        summary:
+        "The HR department is asking employees to complete a feedback survey before the end of the week.",
+
+        tasks:[
+            "Complete employee feedback survey"
+        ],
+
+        deadline:"End of this week",
+
+        spam:false,
+        spamProbability:1,
+
+        phishing:false,
+        phishingProbability:1,
+
+        sentiment:"😐 Neutral",
+
+        reply:
+`Hello,
+
+Thank you for sharing the survey. I will complete it before the end of the week.
+
+Best regards,
+Fahad`
+
+    }
+
+];
+
+
+/* =========================================================
+   SELECT EMAIL
+========================================================= */
+
+function selectEmail(index, element){
+
+    document.querySelectorAll(".email")
+        .forEach(e => e.classList.remove("selected"));
+
+    element.classList.add("selected");
+
+    const email = emails[index];
+
+    document.getElementById("analysisSubject")
+        .textContent = email.subject;
+
+    document.getElementById("analysisSender")
+        .textContent = "From: " + email.sender;
+
+    document.getElementById("summary")
+        .textContent = email.summary;
+
+    document.getElementById("categoryValue")
+        .textContent = email.category;
+
+    const priority = document.getElementById("priorityValue");
+
+    priority.className = "analysis-value";
+
+    if(email.priority === "HIGH"){
+
+        priority.classList.add("high-text");
+
+        priority.textContent = "🔴 HIGH";
+
+    }
+
+    else if(email.priority === "MEDIUM"){
+
+        priority.classList.add("medium-text");
+
+        priority.textContent = "🟡 MEDIUM";
+
+    }
+
+    else{
+
+        priority.classList.add("low-text");
+
+        priority.textContent = "🟢 LOW";
+
+    }
+
+
+    /* TASKS */
+
+    const taskContainer =
+        document.getElementById("tasks");
+
+    taskContainer.innerHTML = "";
+
+    if(email.tasks.length === 0){
+
+        taskContainer.innerHTML =
+            `<div class="task">No tasks detected.</div>`;
+
+    }
+
+    else{
+
+        email.tasks.forEach(task => {
+
+            taskContainer.innerHTML += `
+                <div class="task">
+                    <span class="task-check">✓</span>
+                    ${task}
+                </div>
+            `;
+
+        });
+
+    }
+
+
+    /* DEADLINE */
+
+    const deadlineCard =
+        document.querySelector(".deadline");
+
+    deadlineCard.innerHTML =
+        "📅 <span>" +
+        email.deadline +
+        "</span>";
+
+
+    /* SECURITY */
+
+    const securityBoxes =
+        document.querySelectorAll(".security-box");
+
+
+    securityBoxes[0].className =
+        email.spam
+        ? "security-box warning"
+        : "security-box";
+
+    securityBoxes[0].querySelector(".security-result")
+        .textContent =
+        email.spam
+        ? `⚠ SPAM — ${email.spamProbability}%`
+        : `✓ SAFE — ${email.spamProbability}%`;
+
+
+    securityBoxes[1].className =
+        email.phishing
+        ? "security-box warning"
+        : "security-box";
+
+    securityBoxes[1].querySelector(".security-result")
+        .textContent =
+        email.phishing
+        ? `⚠ PHISHING — ${email.phishingProbability}%`
+        : `✓ SAFE — ${email.phishingProbability}%`;
+
+
+    securityBoxes[2].querySelector(".security-result")
+        .textContent = email.sentiment;
+
+
+    document.getElementById("reply")
+        .textContent = email.reply;
+
+
+    showToast("AI analysis updated");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchEmails(){
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    document.querySelectorAll(".email")
+        .forEach(email => {
+
+            const text =
+                email.textContent.toLowerCase();
+
+            email.style.display =
+                text.includes(search)
+                ? "block"
+                : "none";
+
+        });
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function filterEmails(priority, button){
+
+    document.querySelectorAll(".filter")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+
+    document.querySelectorAll(".email")
+        .forEach(email => {
+
+            if(priority === "all"){
+
+                email.style.display = "block";
+
+            }
+
+            else{
+
+                email.style.display =
+                    email.dataset.priority === priority
+                    ? "block"
+                    : "none";
+
+            }
+
+        });
+
+}
+
+
+/* =========================================================
+   COPY REPLY
+========================================================= */
+
+function copyReply(){
+
+    const reply =
+        document.getElementById("reply")
+        .textContent;
+
+    navigator.clipboard.writeText(reply);
+
+    showToast(
+        "Reply copied to clipboard"
+    );
+
+}
+
+
+/* =========================================================
+   SHORT REPLY
+========================================================= */
+
+function makeShort(){
+
+    const text =
+        document.getElementById("reply")
+        .textContent;
+
+    const firstSentence =
+        text.split(".")[0] + ".";
+
+    document.getElementById("reply")
+        .textContent =
+        firstSentence +
+        "\n\nBest regards,\nFahad";
+
+    showToast(
+        "Reply shortened"
+    );
+
+}
+
+
+/* =========================================================
+   FORMAL REPLY
+========================================================= */
+
+function makeFormal(){
+
+    document.getElementById("reply")
+        .textContent =
+`Dear Sir/Madam,
+
+Thank you for your email and for providing the information.
+
+I acknowledge the request and will make sure that the required action is completed within the specified timeframe.
+
+Please let me know if any additional information is required.
+
+Kind regards,
+Fahad`;
+
+    showToast(
+        "Formal reply generated"
+    );
+
+}
+
+
+/* =========================================================
+   EDIT REPLY
+========================================================= */
+
+function openReply(){
+
+    document.getElementById("replyEditor")
+        .value =
+        document.getElementById("reply")
+        .textContent;
+
+    document.getElementById("replyModal")
+        .classList.add("show");
+
+}
+
+
+function saveReply(){
+
+    document.getElementById("reply")
+        .textContent =
+        document.getElementById("replyEditor")
+        .value;
+
+    closeModal("replyModal");
+
+    showToast(
+        "Reply saved"
+    );
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function closeModal(id){
+
+    document.getElementById(id)
+        .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   SEND EMAIL
+========================================================= */
+
+function sendEmail(){
+
+    closeModal("composeModal");
+
+    showToast(
+        "Email sent successfully"
+    );
+
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function toggleDark(){
+
+    showToast(
+        "Dark mode is already enabled"
+    );
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function openSettings(){
+
+    showToast(
+        "Settings panel coming soon"
+    );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function changeSection(element, section){
+
+    document.querySelectorAll(".nav-item")
+        .forEach(item =>
+            item.classList.remove("active")
+        );
+
+    element.classList.add("active");
+
+
+    if(section === "tasks"){
+
+        showToast(
+            "Showing your pending tasks"
+        );
+
+    }
+
+    else if(section === "calendar"){
+
+        showToast(
+            "Showing upcoming calendar events"
+        );
+
+    }
+
+    else if(section === "spam"){
+
+        showToast(
+            "Showing security center"
+        );
+
+    }
+
+    else if(section === "important"){
+
+        showToast(
+            "Showing high-priority emails"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },2500);
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUT
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.ctrlKey &&
+            event.key.toLowerCase() === "k"
+        ){
+
+            event.preventDefault();
+
+            document.getElementById("searchInput")
+                .focus();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
